@@ -118,7 +118,7 @@
                 <div class="mb-8">
                     <label class="form-label-custom">Kelas</label>
                     <div class="relative">
-                        <!-- Tambahkan class 'appearance-none' untuk menghilangkan panah bawaan browser -->
+                        <!-- Added 'appearance-none' untuk menghilangkan panah bawaan browser -->
                         <select name="Kelas" id="kelasSelect" required class="form-input-custom block w-full pl-5 pr-12 rounded-xl cursor-pointer appearance-none" disabled>
                             <option value="" disabled selected>Menunggu data...</option>
                         </select>
@@ -133,7 +133,7 @@
                     <div>
                         <label class="form-label-custom">Hari</label>
                         <div class="relative">
-                            <!-- Tambahkan class 'appearance-none' -->
+                            <!-- Added 'appearance-none' -->
                             <select name="Hari" id="hariSelect" required class="form-input-custom block w-full pl-5 pr-12 rounded-xl cursor-pointer appearance-none">
                                 <option value="Senin">Senin</option>
                                 <option value="Selasa">Selasa</option>
@@ -173,7 +173,7 @@
                 <div class="mb-8">
                     <label class="form-label-custom">Mata Pelajaran</label>
                     <div class="relative">
-                        <!-- Tambahkan class 'appearance-none' -->
+                        <!-- Added 'appearance-none' -->
                         <select name="Mata Pelajaran" id="mapelSelect" required class="form-input-custom block w-full pl-5 pr-12 rounded-xl cursor-pointer appearance-none" disabled>
                             <option value="" disabled selected>Menunggu data...</option>
                         </select>
@@ -304,8 +304,8 @@
         const SHEET_NAME_SISWA = 'Kelas'; 
 
         // --- KONFIGURASI SCRIPT (TUJUAN PENYIMPANAN DATA) ---
-        // PENTING: Jika data tidak terkirim, pastikan URL di bawah ini
-        // sesuai dengan Web App URL dari Deployment Google Apps Script Anda.
+        // Masukkan URL Web App Google Apps Script Anda di sini nanti.
+        // Saat ini masih kosong/placeholder.
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxMFt7pTe5IcmBrN5_hw7tjsA7aTl5omk-4ju0u1JyiqYYRAsyZb3hOWWdmzc65YcWY/exec'; 
 
         let allStudentsData = []; 
@@ -599,7 +599,19 @@
             btnLoading.classList.remove('hidden');
             btnLoading.classList.add('flex');
 
-            fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            // --- PERBAIKAN FORMAT TANGGAL ---
+            const formData = new FormData(form);
+            const rawDate = document.getElementById('tanggalInput').value;
+            if (rawDate) {
+                // Konversi YYYY-MM-DD ke "16 Desember 2025"
+                const [year, month, day] = rawDate.split('-').map(Number);
+                const dateObj = new Date(year, month - 1, day);
+                const options = { day: 'numeric', month: 'long', year: 'numeric' };
+                const formattedDate = dateObj.toLocaleDateString('id-ID', options);
+                formData.set('Tanggal', formattedDate);
+            }
+
+            fetch(scriptURL, { method: 'POST', body: formData })
                 .then(response => {
                     btnLoading.classList.add('hidden');
                     btnLoading.classList.remove('flex');
@@ -634,4 +646,4 @@
         });
     </script>
 </body>
-  </html>
+</html>
